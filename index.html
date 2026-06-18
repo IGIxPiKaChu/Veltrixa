@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veltrixa - Futuristic Authentication System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <canvas id="canvas-container"></canvas>
+    
+    <div class="auth-container">
+        <!-- Login Panel -->
+        <div class="panel" id="panel-login">
+            <div class="panel-content">
+                <div class="logo-container">
+                    <div class="animated-logo">
+                        <div class="logo-text">V</div>
+                        <div class="logo-gradient"></div>
+                    </div>
+                    <h1>Veltrixa</h1>
+                </div>
+                
+                <form id="login-form" class="form">
+                    <div class="form-group">
+                        <input type="email" id="login-email" placeholder="Email Address" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="password-wrapper">
+                            <input type="password" id="login-password" placeholder="Password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('login-password')">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="remember-me">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#forgot" class="forgot-link" onclick="switchPanel('panel-forgot')">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">Sign In</button>
+                </form>
+                
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+                
+                <div class="social-buttons">
+                    <button class="btn-social btn-google" onclick="loginWithGoogle()">
+                        <span class="social-icon">🔵</span>
+                        Google
+                    </button>
+                    <button class="btn-social btn-github" onclick="loginWithGithub()">
+                        <span class="social-icon">⬛</span>
+                        GitHub
+                    </button>
+                    <button class="btn-social btn-guest" onclick="loginAsGuest()">
+                        <span class="social-icon">👤</span>
+                        Guest
+                    </button>
+                </div>
+                
+                <p class="auth-switch">
+                    Don't have an account? 
+                    <a href="#register" onclick="switchPanel('panel-register')">Create one</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Register Panel -->
+        <div class="panel hidden" id="panel-register">
+            <div class="panel-content">
+                <div class="logo-container">
+                    <div class="animated-logo">
+                        <div class="logo-text">V</div>
+                        <div class="logo-gradient"></div>
+                    </div>
+                    <h1>Veltrixa</h1>
+                </div>
+                
+                <form id="register-form" class="form">
+                    <div class="form-group">
+                        <input type="text" id="register-name" placeholder="Full Name" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" id="register-email" placeholder="Email Address" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="password-wrapper">
+                            <input type="password" id="register-password" placeholder="Password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('register-password')">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="input-underline"></div>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strength-bar"></div>
+                            <span class="strength-text" id="strength-text">Password strength</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="password-wrapper">
+                            <input type="password" id="register-confirm" placeholder="Confirm Password" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('register-confirm')">
+                                <span class="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="terms-checkbox" required>
+                        <span>I agree to the <a href="#">Terms & Conditions</a></span>
+                    </label>
+                    
+                    <button type="submit" class="btn-login">Create Account</button>
+                </form>
+                
+                <p class="auth-switch">
+                    Already have an account? 
+                    <a href="#login" onclick="switchPanel('panel-login')">Sign in</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Forgot Password Panel -->
+        <div class="panel hidden" id="panel-forgot">
+            <div class="panel-content">
+                <div class="logo-container">
+                    <div class="animated-logo">
+                        <div class="logo-text">V</div>
+                        <div class="logo-gradient"></div>
+                    </div>
+                    <h1>Reset Password</h1>
+                </div>
+                
+                <p class="forgot-description">Enter your email address and we'll send you a link to reset your password.</p>
+                
+                <form id="forgot-form" class="form">
+                    <div class="form-group">
+                        <input type="email" id="forgot-email" placeholder="Email Address" required>
+                        <div class="input-underline"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">Send Reset Link</button>
+                </form>
+                
+                <p class="auth-switch">
+                    <a href="#login" onclick="switchPanel('panel-login')">Back to login</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Success Overlay -->
+        <div class="success-overlay hidden" id="success-overlay">
+            <div class="success-content">
+                <div class="success-icon">✓</div>
+                <h2 id="success-title">Success!</h2>
+                <p id="success-message">Your account has been created successfully.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/three-animations.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
