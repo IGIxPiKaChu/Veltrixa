@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Edit Profile — Veltrixa</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07071a;--card:#111128;
+  --cyan:#00d4ff;--purple:#9b5de5;--pink:#f72585;--green:#4ade80;
+  --text:#e2e8f0;--muted:#5a6a82;
+  --grad:linear-gradient(135deg,#00d4ff,#9b5de5,#f72585);
+  --fD:'Rajdhani',sans-serif;--fB:'Inter',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fB);overflow:hidden}
+#three-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.shell{position:relative;z-index:1;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.screen{
+  width:100%;max-width:420px;height:100%;max-height:860px;
+  background:rgba(9,9,28,0.88);backdrop-filter:blur(20px);
+  border:1px solid rgba(155,93,229,0.25);border-radius:36px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,212,255,0.08),0 0 60px rgba(155,93,229,0.12),0 0 120px rgba(0,212,255,0.06),inset 0 1px 0 rgba(255,255,255,0.06);
+  position:relative;
+}
+.screen::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:40%;height:2px;
+  background:linear-gradient(90deg,transparent,#9b5de5,#00d4ff,#9b5de5,transparent);
+  border-radius:0 0 8px 8px;z-index:10;
+}
+.pheader{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 18px 14px;
+  background:rgba(9,9,28,0.7);backdrop-filter:blur(16px);flex-shrink:0;
+}
+.icon-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text);transition:border-color .2s,color .2s;flex-shrink:0;
+}
+.icon-circle:hover{border-color:var(--cyan);color:var(--cyan)}
+.pheader h1{font-size:17px;font-weight:600;letter-spacing:.3px}
+.save-btn{
+  background:none;border:none;cursor:pointer;
+  font-size:14px;font-weight:600;color:var(--cyan);font-family:var(--fB);
+  padding:6px 4px;transition:color .2s;
+}
+.save-btn:hover{color:var(--pink)}
+.save-btn.loading{opacity:.5;pointer-events:none}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 20px 40px;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+
+.avatar-edit-wrap{display:flex;justify-content:center;padding:18px 0 22px}
+.avatar-edit-inner{position:relative;width:96px;height:96px}
+.avatar-edit-inner .ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:2px solid transparent;
+  background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;
+}
+.avatar-edit-circle{
+  position:absolute;inset:7px;border-radius:50%;
+  background:linear-gradient(135deg,#1a1a3e,#2a1a4e);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.avatar-edit-circle svg{width:48px;height:48px;color:var(--purple)}
+.cam-badge{
+  position:absolute;bottom:2px;right:2px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--grad);border:3px solid var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 0 12px rgba(0,212,255,0.5);
+  transition:transform .15s;
+}
+.cam-badge:hover{transform:scale(1.08)}
+.cam-badge svg{width:14px;height:14px;color:#fff}
+
+.field-group{margin-bottom:18px}
+.field-label{
+  font-size:12px;color:var(--muted);font-weight:600;
+  letter-spacing:.4px;margin-bottom:7px;display:flex;justify-content:space-between;
+}
+.char-count{font-size:11px;color:var(--muted);font-weight:400}
+.field-input{
+  width:100%;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);border-radius:12px;
+  padding:13px 16px;font-size:14px;color:var(--text);font-family:var(--fB);
+  outline:none;transition:border-color .25s,box-shadow .25s;
+}
+.field-input:focus{border-color:rgba(0,212,255,0.45);box-shadow:0 0 0 3px rgba(0,212,255,0.07)}
+textarea.field-input{resize:none;font-family:var(--fB);line-height:1.5;min-height:64px}
+.field-with-icon{position:relative}
+.field-with-icon .fi-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.field-with-icon input{padding-right:40px}
+
+.social-row{display:flex;gap:10px;margin-top:8px}
+.social-btn{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .2s,transform .15s;
+}
+.social-btn:hover{transform:translateY(-2px)}
+.social-btn svg{width:19px;height:19px}
+.social-btn.twitter{color:#1da1f2;border-color:rgba(29,161,242,0.25)}
+.social-btn.github{color:#fff;border-color:rgba(255,255,255,0.15)}
+.social-btn.linkedin{color:#0a66c2;border-color:rgba(10,102,194,0.25)}
+.social-btn.web{color:var(--purple);border-color:rgba(155,93,229,0.25)}
+
+#loader{
+  position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity .4s;
+}
+.loader-logo{animation:floatY 2s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.loader-dots{display:flex;gap:6px}
+.loader-dots div{width:7px;height:7px;border-radius:50%;animation:dot 1.2s ease-in-out infinite}
+.loader-dots div:nth-child(1){background:var(--cyan);animation-delay:0s}
+.loader-dots div:nth-child(2){background:var(--purple);animation-delay:.2s}
+.loader-dots div:nth-child(3){background:var(--pink);animation-delay:.4s}
+@keyframes dot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+
+#toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:rgba(11,11,32,0.95);border:1px solid rgba(155,93,229,0.3);
+  border-radius:10px;padding:10px 20px;font-size:13px;color:var(--text);
+  white-space:nowrap;z-index:999;
+  transition:transform .3s cubic-bezier(.34,1.4,.64,1),opacity .3s;opacity:0;pointer-events:none;
+}
+#toast.ok{border-color:rgba(74,222,128,.4);color:var(--green)}
+
+@media(max-height:700px){.screen{border-radius:0}}
+@media(min-height:860px){.screen{border-radius:36px}}
+</style>
+</head>
+<body>
+
+<canvas id="three-bg"></canvas>
+
+<div id="loader">
+  <svg class="loader-logo" width="52" height="52" viewBox="0 0 56 56" fill="none">
+    <defs><linearGradient id="lg0" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00d4ff"/><stop offset="50%" stop-color="#9b5de5"/><stop offset="100%" stop-color="#f72585"/></linearGradient></defs>
+    <polygon points="28,4 52,18 52,38 28,52 4,38 4,18" stroke="url(#lg0)" stroke-width="1.5" fill="none"/>
+    <circle cx="28" cy="28" r="5" fill="url(#lg0)"/>
+  </svg>
+  <div class="loader-dots"><div></div><div></div><div></div></div>
+</div>
+
+<div class="shell">
+  <div class="screen" id="main-screen" style="opacity:0;transition:opacity .5s">
+
+    <div class="pheader">
+      <button class="icon-circle" onclick="window.location.href='profileactivity.html'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <h1>Edit Profile</h1>
+      <button class="save-btn" id="save-btn" onclick="saveProfile()">Save</button>
+    </div>
+
+    <div class="content">
+
+      <div class="avatar-edit-wrap">
+        <div class="avatar-edit-inner">
+          <div class="ring"></div>
+          <div class="avatar-edit-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div class="cam-badge" onclick="toast('Photo upload coming soon')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Full Name</div>
+        <input class="field-input" id="f-name" type="text" value="" placeholder="Your name"/>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Username</div>
+        <input class="field-input" id="f-username" type="text" value="" placeholder="@username"/>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Bio <span class="char-count" id="bio-count">0/120</span></div>
+        <textarea class="field-input" id="f-bio" maxlength="120" placeholder="Tell us about yourself">Exploring the future, one line of code at a time.</textarea>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Email</div>
+        <input class="field-input" id="f-email" type="email" value="" disabled style="opacity:.6;cursor:not-allowed"/>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Location</div>
+        <div class="field-with-icon">
+          <input class="field-input" id="f-location" type="text" placeholder="City, Country"/>
+          <svg class="fi-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Website</div>
+        <input class="field-input" id="f-website" type="text" placeholder="yourwebsite.com"/>
+      </div>
+
+      <div class="field-group">
+        <div class="field-label">Social Links</div>
+        <div class="social-row">
+          <div class="social-btn twitter" onclick="toast('Link Twitter coming soon')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+          </div>
+          <div class="social-btn github" onclick="toast('Link GitHub coming soon')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.21c0 4.51 2.87 8.33 6.84 9.68.5.09.68-.22.68-.49v-1.7c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.11-1.48-1.11-1.48-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.27 2.75 1.05A9.38 9.38 0 0112 7.03c.85 0 1.7.12 2.5.34 1.91-1.32 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.81c0 .27.18.59.69.49A10.22 10.22 0 0022 12.21C22 6.58 17.52 2 12 2z"/></svg>
+          </div>
+          <div class="social-btn linkedin" onclick="toast('Link LinkedIn coming soon')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zM8.34 18V9.75H5.67V18h2.67zm-1.34-9.4a1.55 1.55 0 100-3.1 1.55 1.55 0 000 3.1zM18.34 18v-4.6c0-2.46-1.31-3.6-3.06-3.6a2.64 2.64 0 00-2.39 1.31h-.04V9.75h-2.56c.03.71 0 8.25 0 8.25h2.56v-4.6c0-.25.02-.5.09-.68.2-.5.66-1.03 1.43-1.03 1.01 0 1.41.77 1.41 1.89V18h2.56z"/></svg>
+          </div>
+          <div class="social-btn web" onclick="toast('Add another link coming soon')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /screen -->
+</div>
+
+<div id="toast"></div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const canvas=document.getElementById('three-bg');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,1,0.1,1000);
+  camera.position.z=28;
+  function resize(){const W=window.innerWidth,H=window.innerHeight;renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix();}
+  resize();window.addEventListener('resize',resize);
+  const sg=new THREE.BufferGeometry();
+  const sc=2000,sp=new Float32Array(sc*3),sco=new Float32Array(sc*3);
+  const pal=[[0,0.83,1],[0.61,0.36,0.9],[0.97,0.15,0.52],[1,1,1]];
+  for(let i=0;i<sc;i++){
+    sp[i*3]=(Math.random()-.5)*140;sp[i*3+1]=(Math.random()-.5)*140;sp[i*3+2]=(Math.random()-.5)*100;
+    const c=pal[Math.floor(Math.random()*pal.length)];sco[i*3]=c[0];sco[i*3+1]=c[1];sco[i*3+2]=c[2];
+  }
+  sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  sg.setAttribute('color',new THREE.BufferAttribute(sco,3));
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:.15,vertexColors:true,transparent:true,opacity:.9})));
+  function ring(r,c,op,rx,ry){const m=new THREE.Mesh(new THREE.TorusGeometry(r,.05,8,120),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op}));m.rotation.x=rx;m.rotation.y=ry;scene.add(m);return m;}
+  const r1=ring(16,0x00d4ff,.1,Math.PI/4,0);
+  const r2=ring(12,0x9b5de5,.08,-Math.PI/3,Math.PI/5);
+  const r3=ring(20,0xf72585,.05,Math.PI/6,Math.PI/3);
+  const nodes=[];const nc=[0x00d4ff,0x9b5de5,0xf72585];
+  for(let i=0;i<28;i++){
+    const m=new THREE.Mesh(new THREE.SphereGeometry(Math.random()*.1+.04,8,8),new THREE.MeshBasicMaterial({color:nc[i%3],transparent:true,opacity:Math.random()*.5+.2}));
+    const r=Math.random()*18+4,t=Math.random()*Math.PI*2,p=Math.random()*Math.PI;
+    m.position.set(r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p));
+    m.userData={ox:m.position.x,oy:m.position.y,oz:m.position.z,sp:Math.random()*.5+.2,amp:Math.random()*1.8+.5,ph:Math.random()*Math.PI*2};
+    scene.add(m);nodes.push(m);
+  }
+  function neb(x,y,z,c,op,s){const m=new THREE.Mesh(new THREE.PlaneGeometry(s,s),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op,side:THREE.DoubleSide,depthWrite:false}));m.position.set(x,y,z);m.rotation.z=Math.random()*Math.PI;scene.add(m);}
+  neb(-12,5,-18,0x00d4ff,0.03,20);neb(12,-5,-22,0x9b5de5,0.04,24);neb(0,0,-25,0xf72585,0.02,30);
+  let mx=0,my=0;
+  window.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2;});
+  window.addEventListener('touchmove',e=>{mx=(e.touches[0].clientX/window.innerWidth-.5)*2;my=(e.touches[0].clientY/window.innerHeight-.5)*2;},{passive:true});
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.007;
+    r1.rotation.z+=.002;r2.rotation.z-=.0015;r3.rotation.y+=.001;
+    nodes.forEach(n=>{const d=n.userData;n.position.x=d.ox+Math.sin(t*d.sp+d.ph)*d.amp;n.position.y=d.oy+Math.cos(t*d.sp*.7+d.ph)*d.amp;n.material.opacity=.15+Math.abs(Math.sin(t*d.sp+d.ph))*.45;});
+    camera.position.x+=(mx*1.8-camera.position.x)*.035;camera.position.y+=(-my*1.4-camera.position.y)*.035;
+    camera.lookAt(scene.position);renderer.render(scene,camera);
+  }
+  animate();
+})();
+</script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+const cfg = {
+  apiKey:            "AIzaSyAj9Ix7QMqN2cMVG9Guf9tZs_V108badwc",
+  authDomain:        "veltrixa-55dd3.firebaseapp.com",
+  databaseURL:       "https://veltrixa-55dd3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "veltrixa-55dd3",
+  storageBucket:     "veltrixa-55dd3.firebasestorage.app",
+  messagingSenderId: "20010041783",
+  appId:             "1:20010041783:web:53e3f960c10a0238b0e832",
+  measurementId:     "G-WNQW7R5K7D"
+};
+const app  = initializeApp(cfg);
+const auth = getAuth(app);
+const loader = document.getElementById('loader');
+const screen = document.getElementById('main-screen');
+let currentUser = null;
+
+onAuthStateChanged(auth, user => {
+  if(user){
+    currentUser = user;
+    const name = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+    document.getElementById('f-name').value = name;
+    document.getElementById('f-username').value = '@' + (user.email ? user.email.split('@')[0] : 'user');
+    document.getElementById('f-email').value = user.email || '';
+    loader.style.opacity='0';
+    setTimeout(()=>{loader.style.display='none';screen.style.opacity='1';},400);
+  } else {
+    window.location.href='index.html';
+  }
+});
+
+window.saveProfile = async () => {
+  if(!currentUser) return;
+  const btn = document.getElementById('save-btn');
+  btn.classList.add('loading');
+  btn.textContent = 'Saving…';
+  try{
+    await updateProfile(currentUser, { displayName: document.getElementById('f-name').value.trim() });
+    toast('Profile updated!','ok');
+    setTimeout(()=>window.location.href='profileactivity.html',900);
+  }catch(e){
+    toast('Failed to save — try again');
+    btn.classList.remove('loading');
+    btn.textContent = 'Save';
+  }
+};
+</script>
+
+<script>
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=type;
+  t.style.transform='translateX(-50%) translateY(0)';t.style.opacity='1';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.transform='translateX(-50%) translateY(60px)';t.style.opacity='0';},2200);
+}
+window.toast=toast;
+
+const bioEl = document.getElementById('f-bio');
+const bioCount = document.getElementById('bio-count');
+function updateBioCount(){ bioCount.textContent = `${bioEl.value.length}/120`; }
+bioEl.addEventListener('input', updateBioCount);
+updateBioCount();
+</script>
+</body>
+</html>
