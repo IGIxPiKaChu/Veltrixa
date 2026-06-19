@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Profile — Veltrixa</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07071a;--card:#111128;
+  --cyan:#00d4ff;--purple:#9b5de5;--pink:#f72585;--green:#4ade80;
+  --text:#e2e8f0;--muted:#5a6a82;
+  --grad:linear-gradient(135deg,#00d4ff,#9b5de5,#f72585);
+  --fD:'Rajdhani',sans-serif;--fB:'Inter',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fB);overflow:hidden}
+#three-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.shell{position:relative;z-index:1;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.screen{
+  width:100%;max-width:420px;height:100%;max-height:860px;
+  background:rgba(9,9,28,0.88);backdrop-filter:blur(20px);
+  border:1px solid rgba(155,93,229,0.25);border-radius:36px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(0,212,255,0.08),0 0 60px rgba(155,93,229,0.12),0 0 120px rgba(0,212,255,0.06),inset 0 1px 0 rgba(255,255,255,0.06);
+  position:relative;
+}
+.screen::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:40%;height:2px;background:linear-gradient(90deg,transparent,#9b5de5,#00d4ff,#9b5de5,transparent);
+  border-radius:0 0 8px 8px;z-index:10;
+}
+.pheader{
+  display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px;
+  background:rgba(9,9,28,0.7);backdrop-filter:blur(16px);flex-shrink:0;
+}
+.icon-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);
+  transition:border-color .2s,color .2s;flex-shrink:0;
+}
+.icon-circle:hover{border-color:var(--cyan);color:var(--cyan)}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 0 30px;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+
+.avatar-block{display:flex;flex-direction:column;align-items:center;padding:14px 20px 16px}
+.avatar-ring-wrap{position:relative;width:108px;height:108px;margin-bottom:14px}
+.avatar-ring-wrap .ring{
+  position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+  background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--grad) border-box;
+  animation:spinRing 6s linear infinite;
+}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+.avatar-circle{
+  position:absolute;inset:8px;border-radius:50%;
+  background:linear-gradient(135deg,#3a1a4e,#1a2a4e);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:0 0 24px rgba(155,93,229,0.3);
+}
+.avatar-circle svg{width:54px;height:54px;color:var(--pink)}
+.profile-name-row{display:flex;align-items:center;gap:6px}
+.profile-name{font-size:21px;font-weight:700;letter-spacing:.2px}
+.verified-badge{width:18px;height:18px;flex-shrink:0}
+.profile-handle-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.profile-handle{font-size:13.5px;color:var(--cyan)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.status-text{font-size:12px;color:var(--green)}
+
+/* ACTION BUTTONS */
+.action-row{display:flex;gap:8px;padding:6px 16px 18px}
+.action-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--card);border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;padding:12px 6px;cursor:pointer;
+  transition:border-color .2s,transform .15s;
+}
+.action-btn:hover{transform:translateY(-2px);border-color:rgba(155,93,229,0.3)}
+.action-btn svg{width:19px;height:19px;color:var(--purple)}
+.action-btn span{font-size:11px;color:var(--muted);font-weight:500}
+
+/* ABOUT */
+.about-block{padding:0 20px 18px}
+.about-label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.about-text{font-size:13.5px;color:var(--text);line-height:1.55}
+.joined-row{display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px;color:var(--muted)}
+
+/* STATS */
+.stats-row{
+  display:flex;align-items:center;justify-content:space-around;
+  padding:18px 24px;margin:0 16px 18px;
+  background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:18px;
+}
+.stat-item{text-align:center}
+.stat-num{font-size:19px;font-weight:700;font-family:var(--fD)}
+.stat-label{font-size:11.5px;color:var(--muted);margin-top:2px}
+.stat-divider{width:1px;height:32px;background:rgba(255,255,255,0.07)}
+
+/* MEDIA PREVIEW */
+.media-head{display:flex;align-items:center;justify-content:space-between;padding:0 20px;margin-bottom:12px}
+.media-head h3{font-size:15px;font-weight:600}
+.see-all{background:none;border:none;cursor:pointer;font-size:13px;color:var(--cyan);font-family:var(--fB)}
+.media-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px}
+.media-thumb{
+  aspect-ratio:1;border-radius:10px;cursor:pointer;
+  background-size:cover;background-position:center;
+  transition:transform .15s;
+}
+.media-thumb:hover{transform:scale(1.05)}
+
+#loader{
+  position:fixed;inset:0;z-index:200;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .4s;
+}
+.loader-logo{animation:floatY 2s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.loader-dots{display:flex;gap:6px}
+.loader-dots div{width:7px;height:7px;border-radius:50%;animation:dot 1.2s ease-in-out infinite}
+.loader-dots div:nth-child(1){background:var(--cyan);animation-delay:0s}
+.loader-dots div:nth-child(2){background:var(--purple);animation-delay:.2s}
+.loader-dots div:nth-child(3){background:var(--pink);animation-delay:.4s}
+@keyframes dot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+#toast{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:rgba(11,11,32,0.95);border:1px solid rgba(155,93,229,0.3);
+  border-radius:10px;padding:10px 20px;font-size:13px;color:var(--text);
+  white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.34,1.4,.64,1),opacity .3s;opacity:0;pointer-events:none;
+}
+@media(max-height:700px){.screen{border-radius:0}}
+@media(min-height:860px){.screen{border-radius:36px}}
+</style>
+</head>
+<body>
+
+<canvas id="three-bg"></canvas>
+
+<div id="loader">
+  <svg class="loader-logo" width="52" height="52" viewBox="0 0 56 56" fill="none">
+    <defs><linearGradient id="lg0" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#00d4ff"/><stop offset="50%" stop-color="#9b5de5"/><stop offset="100%" stop-color="#f72585"/></linearGradient></defs>
+    <polygon points="28,4 52,18 52,38 28,52 4,38 4,18" stroke="url(#lg0)" stroke-width="1.5" fill="none"/>
+    <circle cx="28" cy="28" r="5" fill="url(#lg0)"/>
+  </svg>
+  <div class="loader-dots"><div></div><div></div><div></div></div>
+</div>
+
+<div class="shell">
+  <div class="screen" id="main-screen" style="opacity:0;transition:opacity .5s">
+
+    <div class="pheader">
+      <button class="icon-circle" onclick="history.back()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="icon-circle" onclick="toast('More options coming soon')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+      </button>
+    </div>
+
+    <div class="content">
+
+      <div class="avatar-block">
+        <div class="avatar-ring-wrap">
+          <div class="ring"></div>
+          <div class="avatar-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+          </div>
+        </div>
+        <div class="profile-name-row">
+          <span class="profile-name">Sophia Carter</span>
+          <svg class="verified-badge" viewBox="0 0 24 24" fill="#00d4ff"><path d="M12 2l2.4 1.9 3-.6 1 2.9 2.9 1-.6 3 1.9 2.4-1.9 2.4.6 3-2.9 1-1 2.9-3-.6L12 22l-2.4-1.9-3 .6-1-2.9-2.9-1 .6-3L1.4 12l1.9-2.4-.6-3 2.9-1 1-2.9 3 .6z"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="profile-handle-row">
+          <span class="profile-handle">@sophiac</span>
+          <span class="status-dot"></span>
+          <span class="status-text">Online</span>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <div class="action-btn" onclick="window.location.href='groupchatactivity.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span>Message</span>
+        </div>
+        <div class="action-btn" onclick="window.location.href='callsactivity.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>Voice Call</span>
+        </div>
+        <div class="action-btn" onclick="toast('Video call coming soon')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <span>Video Call</span>
+        </div>
+        <div class="action-btn" onclick="toast('More options coming soon')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+          <span>More</span>
+        </div>
+      </div>
+
+      <div class="about-block">
+        <div class="about-label">About</div>
+        <p class="about-text">Digital artist &amp; UI/UX designer. Exploring the intersection of technology and creativity.</p>
+        <div class="joined-row"><span>Joined</span><span>March 2023</span></div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">128</div><div class="stat-label">Chats</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-item"><div class="stat-num">32</div><div class="stat-label">Groups</div></div>
+        <div class="stat-divider"></div>
+        <div class="stat-item"><div class="stat-num">1.4K</div><div class="stat-label">Friends</div></div>
+      </div>
+
+      <div class="media-head">
+        <h3>Media</h3>
+        <button class="see-all" onclick="window.location.href='mediaactivity.html'">See all</button>
+      </div>
+      <div class="media-grid">
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1a1a3e,#3a1a4e)" onclick="window.location.href='mediaactivity.html'"></div>
+        <div class="media-thumb" style="background:linear-gradient(135deg,#0d2438,#1a3a5c)" onclick="window.location.href='mediaactivity.html'"></div>
+        <div class="media-thumb" style="background:radial-gradient(circle at 50% 30%,#f59e0b,#7c2d12)" onclick="window.location.href='mediaactivity.html'"></div>
+        <div class="media-thumb" style="background:linear-gradient(135deg,#1e1b4b,#312e81)" onclick="window.location.href='mediaactivity.html'"></div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /screen -->
+</div>
+
+<div id="toast"></div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const canvas=document.getElementById('three-bg');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(60,1,0.1,1000);
+  camera.position.z=28;
+  function resize(){const W=window.innerWidth,H=window.innerHeight;renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix();}
+  resize();window.addEventListener('resize',resize);
+  const sg=new THREE.BufferGeometry();
+  const sc=2000,sp=new Float32Array(sc*3),sco=new Float32Array(sc*3);
+  const pal=[[0,0.83,1],[0.61,0.36,0.9],[0.97,0.15,0.52],[1,1,1]];
+  for(let i=0;i<sc;i++){
+    sp[i*3]=(Math.random()-.5)*140;sp[i*3+1]=(Math.random()-.5)*140;sp[i*3+2]=(Math.random()-.5)*100;
+    const c=pal[Math.floor(Math.random()*pal.length)];sco[i*3]=c[0];sco[i*3+1]=c[1];sco[i*3+2]=c[2];
+  }
+  sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  sg.setAttribute('color',new THREE.BufferAttribute(sco,3));
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({size:.15,vertexColors:true,transparent:true,opacity:.9})));
+  function ring(r,c,op,rx,ry){const m=new THREE.Mesh(new THREE.TorusGeometry(r,.05,8,120),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op}));m.rotation.x=rx;m.rotation.y=ry;scene.add(m);return m;}
+  const r1=ring(16,0x00d4ff,.1,Math.PI/4,0);
+  const r2=ring(12,0x9b5de5,.08,-Math.PI/3,Math.PI/5);
+  const r3=ring(20,0xf72585,.05,Math.PI/6,Math.PI/3);
+  const nodes=[];const nc=[0x00d4ff,0x9b5de5,0xf72585];
+  for(let i=0;i<28;i++){
+    const m=new THREE.Mesh(new THREE.SphereGeometry(Math.random()*.1+.04,8,8),new THREE.MeshBasicMaterial({color:nc[i%3],transparent:true,opacity:Math.random()*.5+.2}));
+    const r=Math.random()*18+4,t=Math.random()*Math.PI*2,p=Math.random()*Math.PI;
+    m.position.set(r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p));
+    m.userData={ox:m.position.x,oy:m.position.y,oz:m.position.z,sp:Math.random()*.5+.2,amp:Math.random()*1.8+.5,ph:Math.random()*Math.PI*2};
+    scene.add(m);nodes.push(m);
+  }
+  function neb(x,y,z,c,op,s){const m=new THREE.Mesh(new THREE.PlaneGeometry(s,s),new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:op,side:THREE.DoubleSide,depthWrite:false}));m.position.set(x,y,z);m.rotation.z=Math.random()*Math.PI;scene.add(m);}
+  neb(-12,5,-18,0x00d4ff,0.03,20);neb(12,-5,-22,0x9b5de5,0.04,24);neb(0,0,-25,0xf72585,0.02,30);
+  let mx=0,my=0;
+  window.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2;});
+  window.addEventListener('touchmove',e=>{mx=(e.touches[0].clientX/window.innerWidth-.5)*2;my=(e.touches[0].clientY/window.innerHeight-.5)*2;},{passive:true});
+  let t=0;
+  function animate(){
+    requestAnimationFrame(animate);t+=0.007;
+    r1.rotation.z+=.002;r2.rotation.z-=.0015;r3.rotation.y+=.001;
+    nodes.forEach(n=>{const d=n.userData;n.position.x=d.ox+Math.sin(t*d.sp+d.ph)*d.amp;n.position.y=d.oy+Math.cos(t*d.sp*.7+d.ph)*d.amp;n.material.opacity=.15+Math.abs(Math.sin(t*d.sp+d.ph))*.45;});
+    camera.position.x+=(mx*1.8-camera.position.x)*.035;camera.position.y+=(-my*1.4-camera.position.y)*.035;
+    camera.lookAt(scene.position);renderer.render(scene,camera);
+  }
+  animate();
+})();
+</script>
+
+<!-- FIREBASE AUTH GUARD -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+const cfg = {
+  apiKey: "AIzaSyAj9Ix7QMqN2cMVG9Guf9tZs_V108badwc",
+  authDomain: "veltrixa-55dd3.firebaseapp.com",
+  databaseURL: "https://veltrixa-55dd3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "veltrixa-55dd3",
+  storageBucket: "veltrixa-55dd3.firebasestorage.app",
+  messagingSenderId: "20010041783",
+  appId: "1:20010041783:web:53e3f960c10a0238b0e832",
+  measurementId: "G-WNQW7R5K7D"
+};
+const app = initializeApp(cfg);
+const auth = getAuth(app);
+const loader = document.getElementById('loader');
+const screen = document.getElementById('main-screen');
+onAuthStateChanged(auth, user => {
+  if(user){
+    loader.style.opacity='0';
+    setTimeout(()=>{loader.style.display='none';screen.style.opacity='1';},400);
+  } else {
+    window.location.href='index.html';
+  }
+});
+</script>
+
+<script>
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.transform='translateX(-50%) translateY(0)';t.style.opacity='1';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.transform='translateX(-50%) translateY(60px)';t.style.opacity='0';},2000);
+}
+window.toast=toast;
+</script>
+</body>
+</html>
